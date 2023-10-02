@@ -32,7 +32,7 @@ def getArgs():
     parser.add_argument('--vf_coef', type=float, default=0.5, help='')
 
     #Environment Arguments
-    parser.add_argument('--env', type=str, default='9x9', help='the size of the memory maze environment to train on')
+    parser.add_argument('--env', type=str, default='MM', help='the size of the memory maze environment to train on')
 
     #Logging Arguments
     parser.add_argument('--outpath', type=str, default='logs/', help='where to put the tensorboard logs')
