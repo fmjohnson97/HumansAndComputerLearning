@@ -4,6 +4,8 @@ import gymnasium as gym
 import torch
 
 from helm.trainers.lstm_trainer import LSTMPPO
+# from memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
+from endless_memory_gym.memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
 
 def getArgs():
     parser = argparse.ArgumentParser()
@@ -53,7 +55,8 @@ if __name__ == '__main__':
         "model": "HELM",
         "optimizer": "AdamW",
         "epsilon": 1e-8,
-        "topk": 1 }
+        "topk": 1,
+        "learning_rate": 1e-4}
 
     args = getArgs()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -66,8 +69,9 @@ if __name__ == '__main__':
     # env = gym.make("MysteryPath-v0")
 
     if args.env == 'MM':
-        env = gym.make("MortarMayhem-Grid-v0")
+        # env = gym.make("MortarMayhem-Grid-v0")
         # env = gym.make("MortarMayhemB-Grid-v0")
+        env = GridMortarMayhemEnv(render_mode="rgb_array")
     elif args.env == 'MP':
         env = gym.make("MysteryPath-Grid-v0")
     elif args.env == 'SS':
