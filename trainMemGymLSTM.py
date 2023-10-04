@@ -6,6 +6,8 @@ import torch
 from helm.trainers.lstm_trainer import LSTMPPO
 # from memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
 from endless_memory_gym.memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
+from endless_memory_gym.memory_gym.mystery_path_grid import GridMysteryPathEnv
+from endless_memory_gym.memory_gym.searing_spotlights import SearingSpotlightsEnv
 
 def getArgs():
     parser = argparse.ArgumentParser()
@@ -73,9 +75,9 @@ if __name__ == '__main__':
         # env = gym.make("MortarMayhemB-Grid-v0")
         env = GridMortarMayhemEnv(render_mode="rgb_array")
     elif args.env == 'MP':
-        env = gym.make("MysteryPath-Grid-v0")
+        env = GridMysteryPathEnv(render_mode="rgb_array")
     elif args.env == 'SS':
-        env = gym.make("SearingSpotlights-v0")
+        env = SearingSpotlightsEnv(render_mode="rgb_array")
     else:
         print(args.env,"is not a valid environment!!!")
         breakpoint()
