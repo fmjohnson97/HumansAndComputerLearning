@@ -1,5 +1,5 @@
 import argparse
-
+import os
 import gymnasium as gym
 import torch
 
@@ -23,7 +23,7 @@ def getArgs():
     parser.add_argument('--max_grad_norm', type=float, default=0.5, help='')
     parser.add_argument('--min_ent_coef', type=float, default=0, help='')
     parser.add_argument('--min_lr', type=float, default=0, help='min LR')
-    parser.add_argument('--n_envs', type=int, default=16, help='number of envs')
+    parser.add_argument('--n_envs', type=int, default=1, help='number of envs')
     parser.add_argument('--n_epochs', type=int, default=3, help='number of epochs')
     parser.add_argument('--n_steps', type=int, default=500000, help='number of steps')
     parser.add_argument('--n_rollout_steps', type=int, default=128, help='number of epochs')
@@ -92,5 +92,22 @@ if __name__ == '__main__':
                         save_ckpt=args.save_ckpt)
 
     model.learn(total_timesteps=args.n_steps, eval_log_path=args.outpath)
+    # iteration = 0
+    # total_timesteps, callback = model._setup_learn( args.n_steps, None, None, 1, 100, args.outpath, True, "PPO")
+    # latest_run = model.get_latest_run_id(model.tensorboard_log, 'PPO')
+    # model.save_path = os.path.join(os.path.join(model.tensorboard_log, f'PPO_{latest_run}'))
+    # callback.on_training_start(locals(), globals())
+    # model._dump_sources(model.save_path)
+    # model._dump_config(model.save_path)
+    #
+    # while model.num_timesteps < total_timesteps:
+    #     continue_training = model.collect_rollouts(model.env, callback, model.rollout_buffer, model.n_steps)
+    #
+    #     if continue_training is False:
+    #         break
+    #
+    #     iteration += 1
+    #     model._update_current_progress_remaining(model.num_timesteps, total_timesteps)
+    #     breakpoint()
 
     env.close()

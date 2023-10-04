@@ -280,7 +280,7 @@ class GridMortarMayhemEnv(CustomEnv):
         # Retrieve the rendered image of the environment
         vis_obs = pygame.surfarray.array3d(pygame.display.get_surface()).astype(np.float32) / 255.0 # pygame.surfarray.pixels3d(pygame.display.get_surface()).astype(np.uint8)
 
-        return vis_obs, {}
+        return vis_obs
 
     def step(self, action):
         """Take a step in the environment.
@@ -377,7 +377,9 @@ class GridMortarMayhemEnv(CustomEnv):
         # Retrieve the rendered image of the environment
         vis_obs = pygame.surfarray.array3d(pygame.display.get_surface()).astype(np.float32) / 255.0 # pygame.surfarray.pixels3d(pygame.display.get_surface()).astype(np.uint8)
 
-        return vis_obs, reward, done, False, info
+        #expected return like this: obs, self.buf_rews[env_idx], terminated, truncated, self.buf_infos[env_idx]
+        # return vis_obs, reward, done, False, info
+        return vis_obs, reward, done, info
 
     def render(self):
         """Render the environment.
