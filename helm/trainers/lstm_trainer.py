@@ -1,6 +1,7 @@
 import warnings
 from typing import Any, Dict, Optional, Type, Union
 
+import gym
 import numpy as np
 import torch as th
 import os
@@ -217,10 +218,13 @@ class LSTMPPO(OnPolicyAlgorithm):
 
         self.rollout_buffer = RecurrentRolloutBuffer(self.n_steps, self.observation_space, self.action_space, device,
                                                      gamma=gamma, gae_lambda=gae_lambda, n_envs=n_envs)
-
-        self.policy = LSTMImpalaAgent(action_dim=env.action_space.n, input_dim=self.observation_space.shape,
-                                      optimizer=self.config['optimizer'], learning_rate=self.config['learning_rate'],
-                                      hidden_dim=256).to(self.device)
+        if type(env.action_space)==gym.spaces.multi_discrete.MultiDiscrete:
+            action_dim = env.action_space.nvec
+        else:
+            action_dim = env.action_space.n
+        self.policy = LSTMImpalaAgent(action_dim=action_dim, input_dim=self.observation_space.shape,
+                                  optimizer=self.config['optimizer'], learning_rate=self.config['learning_rate'],
+                                  hidden_dim=256).to(self.device)
 
     def _set_seed(self, seed: int) -> None:
         """
@@ -464,8 +468,11 @@ class LSTMPPO(OnPolicyAlgorithm):
                 # hidden = hidden.swapaxes(0, 1)
                 hidden = np.expand_dims(hidden,0)
 
+            #actions for SS should look like this: array([0, 2])
+            #actions for MM/MP should look like this: aarray(2)
             # returns this: (self._obs_from_buf(), np.copy(self.buf_rews), np.copy(self.buf_dones), deepcopy(self.buf_infos))
             new_obs, rewards, dones, infos = env.step([action])
+
             self.num_timesteps += env.num_envs
 
             # Give access to local variables
