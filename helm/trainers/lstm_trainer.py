@@ -218,13 +218,10 @@ class LSTMPPO(OnPolicyAlgorithm):
 
         self.rollout_buffer = RecurrentRolloutBuffer(self.n_steps, self.observation_space, self.action_space, device,
                                                      gamma=gamma, gae_lambda=gae_lambda, n_envs=n_envs)
-        if type(env.action_space)==gym.spaces.multi_discrete.MultiDiscrete:
-            action_dim = env.action_space.nvec
-        else:
-            action_dim = env.action_space.n
-        self.policy = LSTMImpalaAgent(action_dim=action_dim, input_dim=self.observation_space.shape,
-                                  optimizer=self.config['optimizer'], learning_rate=self.config['learning_rate'],
-                                  hidden_dim=256).to(self.device)
+
+        self.policy = LSTMImpalaAgent(action_dim=env.action_space.n, input_dim=self.observation_space.shape,
+                                      optimizer=self.config['optimizer'], learning_rate=self.config['learning_rate'],
+                                      hidden_dim=256).to(self.device)
 
     def _set_seed(self, seed: int) -> None:
         """
@@ -468,10 +465,16 @@ class LSTMPPO(OnPolicyAlgorithm):
                 # hidden = hidden.swapaxes(0, 1)
                 hidden = np.expand_dims(hidden,0)
 
-            #actions for SS should look like this: array([0, 2])
-            #actions for MM/MP should look like this: aarray(2)
             # returns this: (self._obs_from_buf(), np.copy(self.buf_rews), np.copy(self.buf_dones), deepcopy(self.buf_infos))
-            new_obs, rewards, dones, infos = env.step([action])
+            try:
+                new_obs, rewards, dones, infos = env.step([action])
+            except:
+                # breakpoint()
+                values = {0: np.array([0, 0]), 1: np.array([0, 1]), 2: np.array([0, 2]), 3: np.array([1, 0]),
+                          4: np.array([1, 1]), 5: np.array([1, 2]), 6: np.array([2, 0]), 7: np.array([2, 1]),
+                          8: np.array([2, 2])}
+                twoD_action = values[int(action)]
+                new_obs, rewards, dones, infos = env.step([twoD_action])
 
             self.num_timesteps += env.num_envs
 
@@ -484,7 +487,7 @@ class LSTMPPO(OnPolicyAlgorithm):
             self._update_info_buffer(infos)
 
             add_obs = observations.cpu().numpy()
-            action = np.expand_dims(action, axis=-1)
+            # action = np.expand_dims(action, axis=-1)
             rollout_buffer.add(add_obs, hidden, action, rewards, self._last_episode_starts, value, np.array(log_prob).reshape(-1, 1))
             self._last_obs = new_obs
             self._last_episode_starts = dones

@@ -558,7 +558,7 @@ class RecurrentRolloutBuffer(BaseBuffer):
         # as numpy cannot broadcast (n_discrete,) to (n_discrete, 1)
         if isinstance(self.observation_space, spaces.Discrete):
             obs = obs.reshape((self.n_envs,) + self.obs_shape)
-
+        # breakpoint()
         self.observations[self.pos] = np.array(obs).copy()
         self.hiddens[self.pos] = np.array(hidden).copy()
         self.actions[self.pos] = np.array(action).copy()

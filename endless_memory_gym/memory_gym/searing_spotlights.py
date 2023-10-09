@@ -110,7 +110,8 @@ class SearingSpotlightsEnv(CustomEnv):
 
         # Setup observation and action space
         # self.action_space = spaces.MultiDiscrete([3, 3])
-        self.action_space = gym.spaces.multi_discrete.MultiDiscrete([3,3])
+        # self.action_space = gym.spaces.multi_discrete.MultiDiscrete([3,3])
+        self.action_space = gym.spaces.discrete.Discrete(9)
         self.observation_space = gym.spaces.Box(
                     low = 0.0,
                     high = 1.0,
@@ -464,13 +465,20 @@ class SearingSpotlightsEnv(CustomEnv):
             {tuple} -- The resulting observation, reward, done flag, truncation, info dictionary.
         """
         # Move the agent's controlled character
-        self.rotated_agent_surface, self.rotated_agent_rect = self.agent.step(action, self.walkable_rect)
+        if type(action.tolist()) == int:
+            values = {0: np.array([0, 0]), 1: np.array([0, 1]), 2: np.array([0, 2]), 3: np.array([1, 0]),
+                    4:np.array([1,1]), 5:np.array([1,2]), 6:np.array([2,0]), 7:np.array([2,1]),
+                    8:np.array([2,2])}
+            twoD_action = values[int(action)]
+        else:
+            twoD_action = action
+        self.rotated_agent_surface, self.rotated_agent_rect = self.agent.step(twoD_action, self.walkable_rect)
 
         # Render the last action and last reward of the agent
         if self.reset_params["show_last_action"]:
             pygame.draw.rect(self.top_bar_surface, self.action_colors[self.last_action[0]], self.act_rect_0)
             pygame.draw.rect(self.top_bar_surface, self.action_colors[self.last_action[1]], self.act_rect_1)
-            self.last_action = action
+            self.last_action = twoD_action
 
         # Dim light untill off
         if self.spotlight_surface.get_alpha() <= self.reset_params["light_threshold"]:
