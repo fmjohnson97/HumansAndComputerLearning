@@ -26,7 +26,7 @@ def getArgs():
     parser.add_argument('--min_ent_coef', type=float, default=0, help='')
     parser.add_argument('--min_lr', type=float, default=0, help='min LR')
     parser.add_argument('--n_envs', type=int, default=1, help='number of envs')
-    parser.add_argument('--n_epochs', type=int, default=1000, help='number of epochs')
+    parser.add_argument('--n_epochs', type=int, default=50, help='number of epochs')
     parser.add_argument('--n_steps', type=int, default=500000, help='number of steps')
     parser.add_argument('--n_rollout_steps', type=int, default=128, help='number of epochs')
     parser.add_argument('--learning_rate', type=float, default=1e-4, help='initial LR')

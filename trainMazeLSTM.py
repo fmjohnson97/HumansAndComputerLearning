@@ -55,7 +55,8 @@ if __name__ == '__main__':
         "model": "HELM",
         "optimizer": "AdamW",
         "epsilon": 1e-8,
-        "topk": 1 }
+        "topk": 1,
+        "learning_rate": 1e-4}
 
     args = getArgs()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
