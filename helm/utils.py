@@ -9,7 +9,7 @@ from typing import Union, Generator
 from queue import Queue
 import torch as th
 from typing import NamedTuple
-from procgen import ProcgenEnv
+# from procgen import ProcgenEnv
 # from helm.envs.random_maze import Env
 from helm.variables import _ACTION_MAP, ACTIONS
 import dm_env
@@ -219,13 +219,13 @@ def make_maze_env():
     return _init
 
 
-def make_procgen_env(id, num_levels, num_envs):
-    env = ProcgenEnv(env_name=id, num_envs=num_envs, distribution_mode='memory', num_levels=num_levels,
-                     start_level=0)
-    env = VecExtractDictObs(env, 'rgb')
-    env = VecMonitor(env)
-    env = VecNormalize(env, norm_obs=False, norm_reward=True, clip_reward=1.)
-    return env
+# def make_procgen_env(id, num_levels, num_envs):
+#     env = ProcgenEnv(env_name=id, num_envs=num_envs, distribution_mode='memory', num_levels=num_levels,
+#                      start_level=0)
+#     env = VecExtractDictObs(env, 'rgb')
+#     env = VecMonitor(env)
+#     env = VecNormalize(env, norm_obs=False, norm_reward=True, clip_reward=1.)
+#     return env
 
 
 class RolloutBufferSamples(NamedTuple):

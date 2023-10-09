@@ -4,6 +4,8 @@ import gym
 import torch
 
 from helm.trainers.lstm_trainer import LSTMPPO
+# from memory_maze.memory_maze.gym_wrappers import GymWrapper
+
 
 def getArgs():
     parser = argparse.ArgumentParser()
