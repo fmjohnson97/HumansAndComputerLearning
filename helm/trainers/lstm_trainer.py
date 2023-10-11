@@ -171,6 +171,8 @@ class LSTMPPO(OnPolicyAlgorithm):
         self._last_hiddens = None
         self._last_cells = None
 
+        self.last_save_checkpoint_timestep = 0
+
         if lr_decay == 'none':
             self.learning_rate = constant_fn(learning_rate)
         elif lr_decay == 'linear':
@@ -569,6 +571,11 @@ class LSTMPPO(OnPolicyAlgorithm):
         self._dump_config(self.save_path)
 
         while self.num_timesteps < total_timesteps:
+
+            if self.num_timesteps - self.last_save_checkpoint_timestep >= 15000000:
+                checkpoint = self._prepare_checkpoint()
+                th.save(checkpoint, os.path.join(self.save_path, f'ckpt_'+str(self.num_timesteps)+'.pt'))
+                self.last_save_checkpoint_timestep = self.num_timesteps
 
             continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, self.n_steps)
 

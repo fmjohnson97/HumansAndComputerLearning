@@ -2,6 +2,7 @@ import argparse
 import os
 import gymnasium as gym
 import torch
+import numpy as np
 
 from helm.trainers.lstm_trainer import LSTMPPO
 # from memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
@@ -26,8 +27,8 @@ def getArgs():
     parser.add_argument('--min_ent_coef', type=float, default=0, help='')
     parser.add_argument('--min_lr', type=float, default=0, help='min LR')
     parser.add_argument('--n_envs', type=int, default=1, help='number of envs')
-    parser.add_argument('--n_epochs', type=int, default=50, help='number of epochs')
-    parser.add_argument('--n_steps', type=int, default=500000, help='number of steps')
+    parser.add_argument('--n_epochs', type=int, default=3, help='number of epochs')
+    parser.add_argument('--n_steps', type=int, default=150000000, help='number of steps')
     parser.add_argument('--n_rollout_steps', type=int, default=128, help='number of epochs')
     parser.add_argument('--learning_rate', type=float, default=1e-4, help='initial LR')
     parser.add_argument('--lr_decay', type=str, default='none', help='amount of LR decay I guess')
@@ -37,6 +38,8 @@ def getArgs():
 
     #Environment Arguments
     parser.add_argument('--env', type=str, default='MM', help='the size of the memory maze environment to train on')
+    parser.add_argument('--test_runs', type=int, default=100, help='number of test trials to do')
+    parser.add_argument('--weights_path', type=str, default=None, help='path to weights')
 
     #Logging Arguments
     parser.add_argument('--outpath', type=str, default='logs/', help='where to put the tensorboard logs')
@@ -93,23 +96,42 @@ if __name__ == '__main__':
                         max_grad_norm=args.max_grad_norm, adv_norm=args.adv_norm,
                         save_ckpt=args.save_ckpt)
 
-    model.learn(total_timesteps=args.n_steps, eval_log_path=args.outpath)
-    # iteration = 0
-    # total_timesteps, callback = model._setup_learn( args.n_steps, None, None, 1, 100, args.outpath, True, "PPO")
-    # latest_run = model.get_latest_run_id(model.tensorboard_log, 'PPO')
-    # model.save_path = os.path.join(os.path.join(model.tensorboard_log, f'PPO_{latest_run}'))
-    # callback.on_training_start(locals(), globals())
-    # model._dump_sources(model.save_path)
-    # model._dump_config(model.save_path)
-    #
-    # while model.num_timesteps < total_timesteps:
-    #     continue_training = model.collect_rollouts(model.env, callback, model.rollout_buffer, model.n_steps)
-    #
-    #     if continue_training is False:
-    #         break
-    #
-    #     iteration += 1
-    #     model._update_current_progress_remaining(model.num_timesteps, total_timesteps)
-    #     breakpoint()
+    if args.weights_path is None:
+        model = model.learn(total_timesteps=args.n_steps, eval_log_path=args.outpath)
+    else:
+        model.load(args.weights_path)
+
+    env_lengths = []
+    success = []
+    rewards = []
+    for i in range(args.test_runs):
+        breakpoint()
+        # TODO: does this return an observation?
+        obs, info = env.reset()
+        length = 0
+        rew_sum = 0
+        done = False
+        while not done:
+            action, hidden_state = model.predict(obs)
+            # TODO: can you directly use the action???
+            obs, rew, done, timeout, info = env.step(action)
+            rew_sum += rew
+            length += 1
+
+        env_lengths.append(length)
+        success.append(done and not timeout)
+        rewards.append(rew_sum)
+
+    print('Avg episode length:', np.mean(env_lengths))
+    print('Success Rate:', sum(success)/len(success))
+    print('Average Reward:', np.mean(rewards))
+    print()
+    print("Raw Data:")
+    print("Env Lengths")
+    print(env_lengths)
+    print("Successes")
+    print(success)
+    print("Rewards")
+    print(rewards)
 
     env.close()
