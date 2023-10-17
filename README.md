@@ -10,4 +10,4 @@ Then, rename their base folders so that the - are _ (Ex: memory-maze would becom
 
 Next, clone this repo in the same folder as the previous three. Folders with the same name between this repo and the others should be merged. 
 
-Finally, just run the trainMazeLSTM.py and trainMemGymLSTM.py scripts to train the models, or provide weights (--weights path $path_to_model_weights$) to test a model checkpoint.
+Finally, just run the trainMazeLSTM.py and trainMemGymLSTM.py scripts to train the models, or provide weights (--weights path #path_to_model_weights#) to test a model checkpoint.
