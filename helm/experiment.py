@@ -1,4 +1,4 @@
-from utils import make_maze_env, make_dmlab_env, make_miniworld_env, make_minigrid_env, #make_procgen_env
+from utils import make_maze_env, make_dmlab_env, make_miniworld_env, make_minigrid_env#, #make_procgen_env
 import torch
 import os
 import uuid
