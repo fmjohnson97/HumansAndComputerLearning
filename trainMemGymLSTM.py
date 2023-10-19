@@ -3,6 +3,7 @@ import os
 import gymnasium as gym
 import torch
 import numpy as np
+from tqdm import tqdm
 
 from helm.trainers.lstm_trainer import LSTMPPO
 # from memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
@@ -26,7 +27,7 @@ def getArgs():
     parser.add_argument('--max_grad_norm', type=float, default=0.5, help='')
     parser.add_argument('--min_ent_coef', type=float, default=0, help='')
     parser.add_argument('--min_lr', type=float, default=0, help='min LR')
-    parser.add_argument('--n_envs', type=int, default=1, help='number of envs')
+    parser.add_argument('--n_envs', type=int, default=16, help='number of envs')
     parser.add_argument('--n_epochs', type=int, default=3, help='number of epochs')
     parser.add_argument('--n_steps', type=int, default=150000000, help='number of steps')
     parser.add_argument('--n_rollout_steps', type=int, default=128, help='number of epochs')
@@ -38,7 +39,7 @@ def getArgs():
 
     #Environment Arguments
     parser.add_argument('--env', type=str, default='MM', help='the size of the memory maze environment to train on')
-    parser.add_argument('--test_runs', type=int, default=100, help='number of test trials to do')
+    parser.add_argument('--test_runs', type=int, default=750, help='number of test trials to do')
     parser.add_argument('--weights_path', type=str, default=None, help='path to weights')
 
     #Logging Arguments
@@ -99,28 +100,30 @@ if __name__ == '__main__':
     if args.weights_path is None:
         model = model.learn(total_timesteps=args.n_steps, eval_log_path=args.outpath)
     else:
-        model.load(args.weights_path)
+        checkpoint = torch.load(args.weights_path)
+        module_names = [d for d in dir(model.policy) if not d.startswith('_') and
+                        isinstance(getattr(model.policy, d), torch.nn.Module) and d != 'model']
+        for m_name in module_names:
+            getattr(model.policy, m_name).load_state_dict(checkpoint['network'][m_name])
 
-    env_lengths = []
-    success = []
-    rewards = []
-    for i in range(args.test_runs):
-        breakpoint()
-        # TODO: does this return an observation?
-        obs, info = env.reset()
-        length = 0
-        rew_sum = 0
-        done = False
-        while not done:
-            action, hidden_state = model.predict(obs)
-            # TODO: can you directly use the action???
-            obs, rew, done, timeout, info = env.step(action)
-            rew_sum += rew
-            length += 1
+    with torch.no_grad():
+        env_lengths = []
+        success = []
+        rewards = []
+        for i in tqdm(range(args.test_runs)):
+            obs = env.reset()
+            length = 0
+            rew_sum = 0
+            done = False
+            while not done:
+                action, value, log_prob, hidden = model.policy(torch.tensor(obs).permute(2,1,0).unsqueeze(0).to(model.device))
+                obs, rew, done, info = env.step(action)
+                rew_sum += rew
+                length += 1
 
-        env_lengths.append(length)
-        success.append(done and not timeout)
-        rewards.append(rew_sum)
+            env_lengths.append(length)
+            success.append(rew>=0.99)
+            rewards.append(rew_sum)
 
     print('Avg episode length:', np.mean(env_lengths))
     print('Success Rate:', sum(success)/len(success))
