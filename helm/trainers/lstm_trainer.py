@@ -571,8 +571,15 @@ class LSTMPPO(OnPolicyAlgorithm):
         self._dump_config(self.save_path)
 
         while self.num_timesteps < total_timesteps:
-
-            if self.num_timesteps - self.last_save_checkpoint_timestep >= 15000000:
+            if self.num_timesteps <= 50000 and self.num_timesteps - self.last_save_checkpoint_timestep >= 10000:
+                checkpoint = self._prepare_checkpoint()
+                th.save(checkpoint, os.path.join(self.save_path, f'ckpt_'+str(self.num_timesteps)+'.pt'))
+                self.last_save_checkpoint_timestep = self.num_timesteps
+            elif self.num_timesteps <= 505000 and self.num_timesteps - self.last_save_checkpoint_timestep >= 30000:
+                checkpoint = self._prepare_checkpoint()
+                th.save(checkpoint, os.path.join(self.save_path, f'ckpt_'+str(self.num_timesteps)+'.pt'))
+                self.last_save_checkpoint_timestep = self.num_timesteps
+            elif self.num_timesteps - self.last_save_checkpoint_timestep >= 250000:
                 checkpoint = self._prepare_checkpoint()
                 th.save(checkpoint, os.path.join(self.save_path, f'ckpt_'+str(self.num_timesteps)+'.pt'))
                 self.last_save_checkpoint_timestep = self.num_timesteps
