@@ -23,7 +23,7 @@ def getArgs():
     parser.add_argument('--max_grad_norm', type=float, default=0.5, help='')
     parser.add_argument('--min_ent_coef', type=float, default=0, help='')
     parser.add_argument('--min_lr', type=float, default=0, help='min LR')
-    parser.add_argument('--n_envs', type=int, default=16, help='number of envs')
+    parser.add_argument('--n_envs', type=int, default=1, help='number of envs')
     parser.add_argument('--n_epochs', type=int, default=3, help='number of epochs')
     parser.add_argument('--n_steps', type=int, default=150000000, help='number of steps')
     parser.add_argument('--n_rollout_steps', type=int, default=128, help='number of epochs')

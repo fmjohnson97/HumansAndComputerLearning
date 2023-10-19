@@ -487,7 +487,6 @@ class LSTMPPO(OnPolicyAlgorithm):
 
             n_steps += 1
             self._update_info_buffer(infos)
-
             add_obs = observations.cpu().numpy()
             # action = np.expand_dims(action, axis=-1)
             rollout_buffer.add(add_obs, hidden, action, rewards, self._last_episode_starts, value, np.array(log_prob).reshape(-1, 1))

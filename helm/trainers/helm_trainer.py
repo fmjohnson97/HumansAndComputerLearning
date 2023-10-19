@@ -463,7 +463,7 @@ class HELMPPO(OnPolicyAlgorithm):
                 self.policy.memory = self._last_mems
                 action, value, log_prob, hidden = self.policy(observations)
                 # hidden = hidden.swapaxes(0, 1)
-                hidden = np.expand_dims(hidden, 0)
+                # hidden = np.expand_dims(hidden, 0)
                 self._last_mems = self.policy.memory
 
             try:
@@ -488,7 +488,7 @@ class HELMPPO(OnPolicyAlgorithm):
 
             add_obs = observations.cpu().numpy()
             # action = np.expand_dims(action, axis=-1)
-            rollout_buffer.add(add_obs, hidden, action, rewards, self._last_episode_starts, value, log_prob)
+            rollout_buffer.add(add_obs, hidden, action, rewards, self._last_episode_starts, value, np.array(log_prob).reshape(-1, 1))
             self._last_obs = new_obs
             self._last_episode_starts = dones
 
@@ -568,7 +568,7 @@ class HELMPPO(OnPolicyAlgorithm):
         self._dump_config(self.save_path)
 
         while self.num_timesteps < total_timesteps:
-            if self.num_timesteps <= 50000 and self.num_timesteps - self.last_save_checkpoint_timestep >= 10000:
+            if self.num_timesteps <= 50000 and self.num_timesteps - self.last_save_checkpoint_timestep >= 5000:
                 checkpoint = self._prepare_checkpoint()
                 th.save(checkpoint, os.path.join(self.save_path, f'ckpt_'+str(self.num_timesteps)+'.pt'))
                 self.last_save_checkpoint_timestep = self.num_timesteps
