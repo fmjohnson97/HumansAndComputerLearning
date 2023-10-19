@@ -462,6 +462,8 @@ class HELMPPO(OnPolicyAlgorithm):
                 observations = torch.tensor(image_obs / high).float().to(self.device)
                 self.policy.memory = self._last_mems
                 action, value, log_prob, hidden = self.policy(observations)
+                # hidden = hidden.swapaxes(0, 1)
+                hidden = np.expand_dims(hidden, 0)
                 self._last_mems = self.policy.memory
 
             try:
