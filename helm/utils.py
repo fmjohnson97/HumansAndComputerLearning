@@ -297,7 +297,7 @@ class RolloutBuffer(BaseBuffer):
 
         self.observations = np.zeros((self.buffer_size, self.n_envs) + self.obs_shape, dtype=np.float32)
         if self.hidden_dim:
-            self.hiddens = np.zeros((self.buffer_size, self.n_envs, self.hidden_dim), dtype=np.float32)
+            self.hiddens = np.zeros((self.buffer_size, self.n_envs, 2, self.hidden_dim), dtype=np.float32)
         self.actions = np.zeros((self.buffer_size, self.n_envs, self.action_dim), dtype=np.float32)
         self.rewards = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.returns = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
