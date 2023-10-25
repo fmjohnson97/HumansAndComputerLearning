@@ -4,7 +4,7 @@ import gymnasium as gym
 import torch
 import numpy as np
 
-from helm.trainers.helm_trainer import SHELMPPO
+from helm.trainers.shelm_trainer import SHELMPPO
 # from memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
 from endless_memory_gym.memory_gym.mortar_mayhem_grid import GridMortarMayhemEnv
 from endless_memory_gym.memory_gym.mystery_path_grid import GridMysteryPathEnv

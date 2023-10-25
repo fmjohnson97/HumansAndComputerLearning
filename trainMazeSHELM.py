@@ -4,7 +4,7 @@ import gym
 import torch
 import numpy as np
 
-from helm.trainers.helm_trainer import SHELMPPO
+from helm.trainers.shelm_trainer import SHELMPPO
 
 
 def getArgs():
