@@ -29,7 +29,7 @@ def getArgs():
     parser.add_argument('--min_lr', type=float, default=0, help='min LR')
     parser.add_argument('--n_envs', type=int, default=16, help='number of envs')
     parser.add_argument('--n_epochs', type=int, default=5, help='number of epochs')
-    parser.add_argument('--n_steps', type=int, default=5000000, help='number of steps')
+    parser.add_argument('--n_steps', type=int, default=150000000, help='number of steps')
     parser.add_argument('--n_rollout_steps', type=int, default=128, help='number of epochs')
     parser.add_argument('--learning_rate', type=float, default=5e-5, help='initial LR')
     parser.add_argument('--lr_decay', type=str, default='none', help='amount of LR decay I guess')
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         "learning_rate": 1e-4}
 
     args = getArgs()
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 
     # env = gym.make("Endless-SearingSpotlights-v0")
     # env = gym.make("Endless-MortarMayhem-v0")

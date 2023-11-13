@@ -130,6 +130,7 @@ class GridMysteryPathEnv(CustomEnv):
 
     def seed(self,seed):
         self.reset(seed=seed)
+        self.current_seed=seed
 
     def reset(self, seed = None, return_info = True, options = None):
         """Reset the environment.
@@ -142,8 +143,11 @@ class GridMysteryPathEnv(CustomEnv):
         Returns:
             {tuple} -- The initial observation, additional reset information, if specified.
         """
-        super().reset(seed=seed)
-        self.current_seed = seed
+        if seed is not None:
+            super().reset(seed=seed)
+            self.current_seed = seed
+        else:
+            super().reset(seed=self.current_seed)
         self.t = 0
 
         # Check reset parameters for completeness and errors
