@@ -61,7 +61,7 @@ if __name__ == '__main__':
         "learning_rate": 1e-4}
 
     args = getArgs()
-    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     if args.env == '9x9':
         env = gym.make('memory_maze:MemoryMaze-9x9-v0')
@@ -75,6 +75,7 @@ if __name__ == '__main__':
         print(args.env,"is not a valid environment size!!!")
         breakpoint()
 
+    env.seed(args.seed)
     model = HELMPPO("MlpPolicy", env, verbose=1, tensorboard_log=args.outpath,lr_decay=args.lr_decay,
                         ent_coef=args.ent_coef, ent_decay=args.ent_decay, learning_rate=args.learning_rate,
                         vf_coef=args.vf_coef, n_epochs=args.n_epochs, ent_decay_factor=args.ent_decay_factor,

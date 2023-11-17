@@ -77,6 +77,7 @@ if __name__ == '__main__':
         print(args.env,"is not a valid environment size!!!")
         breakpoint()
 
+    breakpoint()
     model = LSTMPPO("MlpPolicy", env, verbose=1, tensorboard_log=args.outpath,lr_decay=args.lr_decay,
                         ent_coef=args.ent_coef, ent_decay=args.ent_decay, learning_rate=args.learning_rate,
                         vf_coef=args.vf_coef, n_epochs=args.n_epochs, ent_decay_factor=args.ent_decay_factor,

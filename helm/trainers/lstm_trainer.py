@@ -170,6 +170,7 @@ class LSTMPPO(OnPolicyAlgorithm):
         self.config = config
         self._last_hiddens = None
         self._last_cells = None
+        self.seed=seed
 
         self.last_save_checkpoint_timestep = 0
 
